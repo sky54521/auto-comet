@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.auto.org/schema/comet" targetNamespace="http://www.auto.org/schema/comet">
+
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+
+	<xsd:annotation>
+		<xsd:documentation>
+			<![CDATA[auto-comet XML schema]]>
+		</xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:element name="auto-comet">
+		<xsd:annotation>
+			<xsd:documentation>
+				<![CDATA[auto-comet]]>
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element ref="comet" minOccurs="0" maxOccurs="unbounded" />
+					<xsd:element ref="property" minOccurs="0" maxOccurs="unbounded" />
+					<xsd:element ref="timeout" minOccurs="0" maxOccurs="1" />
+					<xsd:any namespace="##other" processContents="strict"
+						minOccurs="0" maxOccurs="unbounded" />
+				</xsd:choice>
+			</xsd:sequence>
+			<xsd:anyAttribute namespace="##other"
+				processContents="lax" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="timeout">
+		<xsd:annotation>
+			<xsd:documentation>
+				<![CDATA[If a connection is not used for a long time, will be out!]]>
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:any namespace="##other" processContents="strict"
+						minOccurs="0" maxOccurs="unbounded" />
+				</xsd:choice>
+			</xsd:sequence>
+			<xsd:attribute name="value" type="xsd:int" use="required">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[the minute with timeout!]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="property">
+		<xsd:annotation>
+			<xsd:documentation>
+				<![CDATA[comet]]>
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:any namespace="##other" processContents="strict"
+						minOccurs="0" maxOccurs="unbounded" />
+				</xsd:choice>
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string" use="required">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[property name]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="value" type="xsd:string" use="required">
+				<xsd:annotation>
+					<xsd:documentation source="java:java.lang.Class">
+						<![CDATA[property value]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="comet">
+		<xsd:annotation>
+			<xsd:documentation>
+				<![CDATA[comet]]>
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:any namespace="##other" processContents="strict"
+						minOccurs="0" maxOccurs="unbounded" />
+				</xsd:choice>
+			</xsd:sequence>
+
+			<xsd:attribute name="request" type="xsd:string" use="required">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[url pattern]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="handler" type="xsd:string" use="required">
+				<xsd:annotation>
+					<xsd:documentation source="java:java.lang.Class">
+						<![CDATA[Handler must implements org.auto.comet.SocketHandler]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:anyAttribute namespace="##other"
+				processContents="strict"></xsd:anyAttribute>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+</xsd:schema>

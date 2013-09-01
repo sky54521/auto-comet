@@ -131,7 +131,7 @@ public class AbstractPushSocket implements Socket, PushSocket {
 	
 	/** 重置最后通信时间 */
 	private void resetLastCommunicationTime(String type) {
-		System.out.println("resetLastCommunicationTime: type");
+		System.out.println("resetLastCommunicationTime: "+type);
 		this.lastCommunicationTime = getNowTimeInMillis();
 	}
 

@@ -169,6 +169,11 @@ public class AbstractPushSocket implements Socket, PushSocket {
 					fireError(e);
 				}
 			});
+			//删除之前与此socket对应的request的asyncContext
+			if(this.asyncContext!=null){
+				System.out.println("pushsocket ["+this.getId()+"] 完成上次的异步连接asyncContext.complete()");
+				this.asyncContext.complete();
+			}
 			this.asyncContext = ac;
 		} catch (Exception e) {
 			PushException pe = new PushException(

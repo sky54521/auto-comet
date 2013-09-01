@@ -380,9 +380,9 @@ public class AbstractPushSocket implements Socket, PushSocket {
 			return false;
 		}
 		Long lastTime = this.getLastCommunicationTime();//getLastPushTime()改为getLastCommunicationTime()
-		System.out.println(lastTime);
 		long now = this.getNowTimeInMillis();
 		long sent = now - lastTime;
+		System.out.println("checkPushTimeOut ["+this.getId()+"]: "+sent+"ms");
 		if (sent > pushTimeout) {
 			this.close = true;// 关闭连接
 			PushException e = new PushTimeoutException(

@@ -1,0 +1,15 @@
+.classpath
+.mymetadata
+.project
+.DS_Store
+.pydevproject
+*.class
+target/classes
+web/WEB-INF/classes
+build/
+*.[class]
+*~
+.externalToolBuilders/
+*.pyc
+.settings/
+target/

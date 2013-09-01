@@ -16,6 +16,12 @@ public class JsonProtocolUtils {
 		commend.put(Protocol.SYNCHRONIZE_KEY, Protocol.DISCONNECT_VALUE);
 		return commend;
 	}
+	
+	public static JsonObject getSuspendCommend() {
+		JsonObject commend = new JsonObject();
+		commend.put(Protocol.SYNCHRONIZE_KEY, Protocol.Suspend_Value);
+		return commend;
+	}
 
 	public static String getConnectionCommend(Serializable socketId) {
 		JsonObject commend = new JsonObject();

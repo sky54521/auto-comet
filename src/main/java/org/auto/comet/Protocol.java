@@ -14,6 +14,8 @@ public interface Protocol {
 	String SYNCHRONIZE_KEY = "_S_COMET";
 		/** 同步值：创建连接 */
 		String CONNECTION_VALUE = "C";
+			/** 异步连接中断(comet连接还没断) **/
+			String Suspend_Value = "S";
 		/** 同步值：断开连接 */
 		String DISCONNECT_VALUE = "D";
 	

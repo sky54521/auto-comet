@@ -37,6 +37,7 @@ public class AbstractPushSocket implements Socket, PushSocket {
 	private Serializable id;
 
 	private static final JsonObject CLOSE_MESSAGE;
+	private static final JsonObject Suspend_Message;
 
 	/** 消息队列 */
 	private List<Object> messages;
@@ -51,6 +52,11 @@ public class AbstractPushSocket implements Socket, PushSocket {
 	 * 记录上一次推送的时间。客户端长时间没有轮询，应该发生一个异常。
 	 * */
 	private Long lastPushTime = getNowTimeInMillis();
+	
+	/**
+	 * 最后一次通信时间（push和writeMessage多算通信）
+	 */
+	private Long lastCommunicationTime = getNowTimeInMillis();
 
 	private AsyncContext asyncContext;
 
@@ -62,6 +68,7 @@ public class AbstractPushSocket implements Socket, PushSocket {
 
 	static {
 		CLOSE_MESSAGE = JsonProtocolUtils.getCloseCommend();
+		Suspend_Message = JsonProtocolUtils.getSuspendCommend();
 	}
 	{
 		messages = new LinkedList<Object>();
@@ -119,11 +126,22 @@ public class AbstractPushSocket implements Socket, PushSocket {
 	/** 重置最后推送时间 */
 	private void resetLastPushTime() {
 		this.lastPushTime = getNowTimeInMillis();
+		resetLastCommunicationTime();
+	}
+	
+	/** 重置最后通信时间 */
+	private void resetLastCommunicationTime() {
+		System.out.println("xxxxxxx: resetLastCommunicationTime()被调用");
+		this.lastCommunicationTime = getNowTimeInMillis();
 	}
 
 	/** 获取最后一次推送的时间 */
 	protected Long getLastPushTime() {
 		return lastPushTime;
+	}
+	
+	private Long getLastCommunicationTime(){
+		return lastCommunicationTime;
 	}
 
 	/** 异步等待消息 */
@@ -134,14 +152,17 @@ public class AbstractPushSocket implements Socket, PushSocket {
 			ac.addListener(new AsyncAdapter() {
 				@Override
 				public void onError(AsyncEvent asyncevent) throws IOException {
-					close();
+					//关闭都应该由ConnectionManager来处理，单次的http请求不该影响到此次pushsocket通信
+					suspend();
 					PushException e = new PushException("Async context error!");
 					fireError(e);
 				}
 
 				@Override
 				public void onTimeout(AsyncEvent asyncevent) throws IOException {
-					close();
+					//close();//异步超时不应该关闭pushsocket，而应该由ConnectionManager(AbstractConnectionManager)去关闭
+					//即：一次pushsocket连接，可以对应多次http请求
+					suspend();//把close()改suspend()
 					PushException e = new AsyncTimeoutException(
 							"Async context timeout! wait message more then ["
 									+ asyncTimeout + "]ms");
@@ -285,6 +306,7 @@ public class AbstractPushSocket implements Socket, PushSocket {
 		// PushException e = new PushException("Use a closed pushSocked!");
 		// this.fireError(e);
 		// }
+		this.resetLastCommunicationTime();
 		if (this.hasMessage()) {
 			// 如果有消息则直接将消息推送
 			pushMessage(this.messages, response);
@@ -331,6 +353,13 @@ public class AbstractPushSocket implements Socket, PushSocket {
 		this.sendObjectMessage(CLOSE_MESSAGE);
 		this.close = true;
 	}
+	
+	/**
+	 * 中断异步连接
+	 */
+	public void suspend(){
+		this.sendObjectMessage(Suspend_Message);
+	}
 
 	/**
 	 * 处理推送超时，超时推送代表客户端长时间没有发送连接请求
@@ -345,7 +374,8 @@ public class AbstractPushSocket implements Socket, PushSocket {
 		if (this.isWaiting()) {
 			return false;
 		}
-		Long lastTime = this.getLastPushTime();
+		Long lastTime = this.getLastCommunicationTime();//getLastPushTime()改为getLastCommunicationTime()
+		System.out.println(lastTime);
 		long now = this.getNowTimeInMillis();
 		long sent = now - lastTime;
 		if (sent > pushTimeout) {

@@ -126,12 +126,12 @@ public class AbstractPushSocket implements Socket, PushSocket {
 	/** 重置最后推送时间 */
 	private void resetLastPushTime() {
 		this.lastPushTime = getNowTimeInMillis();
-		resetLastCommunicationTime();
+		resetLastCommunicationTime("推送消息");
 	}
 	
 	/** 重置最后通信时间 */
-	private void resetLastCommunicationTime() {
-		System.out.println("xxxxxxx: resetLastCommunicationTime()被调用");
+	private void resetLastCommunicationTime(String type) {
+		System.out.println("resetLastCommunicationTime: type");
 		this.lastCommunicationTime = getNowTimeInMillis();
 	}
 
@@ -306,7 +306,7 @@ public class AbstractPushSocket implements Socket, PushSocket {
 		// PushException e = new PushException("Use a closed pushSocked!");
 		// this.fireError(e);
 		// }
-		this.resetLastCommunicationTime();
+		this.resetLastCommunicationTime("等待接收消息");
 		if (this.hasMessage()) {
 			// 如果有消息则直接将消息推送
 			pushMessage(this.messages, response);

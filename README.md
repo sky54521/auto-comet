@@ -17,3 +17,5 @@ auto-comet需要运行在实现了servlet3.0规范的容器中，比如tomcat7.0
 目前版本为1.0bate，欢迎你的加入！
 
 
+
+

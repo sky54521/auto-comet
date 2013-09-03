@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
@@ -41,7 +40,7 @@ public class AbstractPushSocket implements Socket, PushSocket {
 	private static final JsonObject Suspend_Message;
 
 	/** 消息队列 */
-	private Vector<Object> messages;
+	private List<Object> messages;
 
 	/** 是否已经预关闭 */
 	private boolean close = false;
@@ -72,7 +71,7 @@ public class AbstractPushSocket implements Socket, PushSocket {
 		Suspend_Message = JsonProtocolUtils.getSuspendCommend();
 	}
 	{
-		messages = new Vector<Object>();
+		messages = new LinkedList<Object>();
 	}
 
 	public AbstractPushSocket() {
@@ -232,8 +231,7 @@ public class AbstractPushSocket implements Socket, PushSocket {
 	/**
 	 * 将消息用指定的writer发送
 	 * */
-	private synchronized void pushMessage(List<Object> messages, PrintWriter writer) {
-		System.out.println("aaaaaaa pushMessage");
+	private void pushMessage(List<Object> messages, PrintWriter writer) {
 		JsonArray array = new JsonArray();
 		boolean isClose = false;
 		for (Object message : messages) {
@@ -268,7 +266,7 @@ public class AbstractPushSocket implements Socket, PushSocket {
 		pushMessage(msgs, response);
 	}
 
-	public synchronized List<String> getCachedData() {
+	public List<String> getCachedData() {
 		List<String> userMessages = new LinkedList<String>();
 		for (Object message : messages) {
 			if (message instanceof String && !this.isCloseMessage(message)) {
@@ -291,7 +289,7 @@ public class AbstractPushSocket implements Socket, PushSocket {
 	/**
 	 * 是否有消息要发送
 	 * */
-	private synchronized boolean hasMessage() {
+	private boolean hasMessage() {
 		return !this.messages.isEmpty();
 	}
 
@@ -307,17 +305,15 @@ public class AbstractPushSocket implements Socket, PushSocket {
 	 * 
 	 * @throws IOException
 	 * */
-	public synchronized void receiveRequest(HttpServletRequest request,
+	public void receiveRequest(HttpServletRequest request,
 			HttpServletResponse response) {
 		// if (isClosed()) {
 		// PushException e = new PushException("Use a closed pushSocked!");
 		// this.fireError(e);
 		// }
-		System.out.println("aaaaaaa receiveRequest");
 		this.resetLastCommunicationTime("等待接收消息");
 		if (this.hasMessage()) {
 			// 如果有消息则直接将消息推送
-			System.out.println("aaaaaaa receiveRequest hasMessage"+this.messages);
 			pushMessage(this.messages, response);
 			// 发送后清空缓冲区
 			this.messages.clear();
@@ -327,7 +323,7 @@ public class AbstractPushSocket implements Socket, PushSocket {
 		}
 	}
 
-	public synchronized void sendObjectMessage(Object message) {
+	public void sendObjectMessage(Object message) {
 		if (isClosed()) {
 			PushException e = new PushException("Use a closed pushSocked!");
 			this.fireError(e);
@@ -335,7 +331,6 @@ public class AbstractPushSocket implements Socket, PushSocket {
 		}
 		// 如果不是等待状态，将消息缓存
 		if (!isWaiting()) {
-			System.out.println("aaaaaaa sendObjectMessage "+message);
 			this.messages.add(message);
 			return;
 		}

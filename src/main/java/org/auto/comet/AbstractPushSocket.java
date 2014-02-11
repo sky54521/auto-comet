@@ -376,7 +376,7 @@ public class AbstractPushSocket implements Socket, PushSocket {
 	 * @return 是否超时
 	 */
 	public boolean checkPushTimeOut(long pushTimeout) {
-		if (this.isWaiting()) {//如果pushsocket对应的asyncContext已经为空后才会回收，此时pushsocket的超时时间为1分钟。
+		if (this.isWaiting()) {//如果pushsocket对应的asyncContext已经为空后才会回收，此时pushsocket的超时时间为1分钟。（即：等到异步连接中断后，才考虑关闭comet连接）
 			return false;
 		}
 		Long lastTime = this.getLastCommunicationTime();//getLastPushTime()改为getLastCommunicationTime()

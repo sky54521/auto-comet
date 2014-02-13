@@ -12,11 +12,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
+
 import org.auto.comet.listener.SocketEvent;
 import org.auto.comet.listener.SocketListener;
 import org.auto.comet.support.JsonProtocolUtils;
 import org.auto.comet.web.listener.AsyncAdapter;
-import org.auto.json.JsonArray;
 import org.auto.json.JsonObject;
 
 /**
@@ -232,7 +233,8 @@ public class AbstractPushSocket implements Socket, PushSocket {
 	 * 将消息用指定的writer发送
 	 * */
 	private void pushMessage(List<Object> messages, PrintWriter writer) {
-		JsonArray array = new JsonArray();
+//		JsonArray array = new JsonArray();
+		JSONArray array = new JSONArray();
 		boolean isClose = false;
 		for (Object message : messages) {
 			if (isCloseMessage(message)) {

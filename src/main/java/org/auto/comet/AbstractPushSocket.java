@@ -387,6 +387,7 @@ public class AbstractPushSocket implements Socket, PushSocket {
 		System.out.println("checkPushTimeOut ["+this.getId()+"]: "+sent+"ms");
 		if (sent > pushTimeout) {
 			this.close = true;// 关闭连接
+			reallyClose();
 			PushException e = new PushTimeoutException(
 					"Push timeout! The client has no connection more than["
 							+ pushTimeout + "]ms");

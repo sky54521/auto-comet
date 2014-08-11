@@ -12,4 +12,8 @@ public interface SocketListener extends EventListener {
 	 * */
 	void onReallyClose(SocketEvent event);
 
+	/**
+	 * 当客户端发起一次request(即建立异步连接)时触发
+	 * */
+	void onRequestConnection(SocketEvent event);
 }

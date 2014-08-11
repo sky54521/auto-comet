@@ -215,6 +215,16 @@ public class AbstractPushSocket implements Socket, PushSocket {
 			listener.onReallyClose(event);
 		}
 	}
+	
+	/**
+	 * 当客户端发起一次request(即建立异步连接)时触发
+	 * */
+	protected void fireRequestConnection() {
+		SocketEvent event = new SocketEvent(this);
+		for (SocketListener listener : listeners) {
+			listener.onRequestConnection(event);
+		}
+	}
 
 	/**
 	 * 触发异常处理
@@ -314,6 +324,8 @@ public class AbstractPushSocket implements Socket, PushSocket {
 		// this.fireError(e);
 		// }
 		this.resetLastCommunicationTime("等待接收消息");
+		fireRequestConnection();//提供"异步连接建立事件"发生时的业务处理方法(也可使用AsyncListener来处理业务)
+		
 		if (this.hasMessage()) {
 			// 如果有消息则直接将消息推送
 			pushMessage(this.messages, response);
